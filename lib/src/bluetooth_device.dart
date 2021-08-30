@@ -34,8 +34,14 @@ class BluetoothDevice {
       });
     }
 
+    try {
+      
     await FlutterBlue.instance._channel
         .invokeMethod('connect', request.writeToBuffer());
+    } catch (e) {
+      timer?.cancel();
+      rethrow;
+    }
 
     await state.firstWhere((s) => s == BluetoothDeviceState.connected);
 
