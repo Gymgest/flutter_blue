@@ -122,6 +122,16 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
         @try {
             CBPeripheral *peripheral = [_scannedPeripherals objectForKey:remoteId];
             if(peripheral == nil) {
+                NSArray *periphs = [self.centralManager retrieveConnectedPeripheralsWithServices:@[[CBUUID UUIDWithString:@"1800"]]];
+                for (CBPeripheral *p in periphs) {
+                    if (![p.identifier.UUIDString isEqualToString:remoteId]) continue;
+                    [self.scannedPeripherals setObject:p forKey:p.identifier.UUIDString];
+                    peripheral = p;
+                    break;
+                }
+            }
+            
+            if (peripheral == nil) {
                 @throw [FlutterError errorWithCode:@"connect"
                                            message:@"Peripheral not found"
                                            details:nil];
